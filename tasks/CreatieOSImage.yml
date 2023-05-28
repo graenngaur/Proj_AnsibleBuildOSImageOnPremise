@@ -1,0 +1,58 @@
+---
+- name: Delete oude Blueprint bestand
+  file:
+    path: "{{ BUILDPRINT_RPATH }}{{ BLUEPRINT_FILENAME }}"
+    state: absent
+
+- name: Copy nieuwe BluePrint bestand
+  copy:
+    src: "{{ BUILDPRINT_LPATH }}{{ BLUEPRINT_FILENAME }}"
+    dest: "{{ BUILDPRINT_RPATH }}{{ BLUEPRINT_FILENAME }}"
+  register: resultsCopy
+
+- name: Push de BluePrint in de composer-cli
+  command:
+    cmd: composer-cli blueprints push {{ BLUEPRINT_FILENAME }}
+    chdir: "{{ BUILDPRINT_RPATH }}"
+  when: resultsCopy
+  register: resultsPushBluePrint
+
+- name: Controle BluePrint in de composer-cli
+  command:
+    cmd: composer-cli blueprints depsolve {{ BLUEPRINT_ID }}
+  when: resultsPushBluePrint
+  register: resultsCheckBluePrint
+  
+- name: creatie van de OS image
+  command:
+    cmd: composer-cli compose start {{ BLUEPRINT_ID }} {{ IMAGE_TYPE }}
+  when: resultsCheckBluePrint
+  register: resultsCreatieImage
+  
+- name: Opzoeken van build image buildID
+  set_fact:
+    IMAGE_BUILDID: "{{ resultsCreatieImage.stdout.split()[1] }}"
+
+- name: wachten op build creatie
+  command:
+    cmd: composer-cli compose info {{ IMAGE_BUILDID }}
+  register: resultsBuildStatus
+  until: resultsBuildStatus.stdout.split()[1] == 'FINISHED'
+  failed_when: resultsBuildStatus.stdout.split()[1] == 'FAILED'
+  changed_when: false
+  retries: 10
+  delay: 60
+  ignore_errors: true
+
+- name: Ophalen van OS image
+  command:
+    cmd: composer-cli compose image {{ IMAGE_BUILDID }}
+    chdir: "{{ IMAGE_PATH }}"
+  changed_when: true
+
+- name: Wissen van build image {{ IMAGE_BUILDID }}
+  command:
+    cmd: composer-cli compose delete {{ IMAGE_BUILDID }}
+  changed_when: true
+  when: (IMAGE_2DELETE | bool) and (resultsBuildStatus.stdout.split()[1] == 'FINISHED')
+  

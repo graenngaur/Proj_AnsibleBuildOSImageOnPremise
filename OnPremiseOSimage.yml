@@ -1,0 +1,9 @@
+---
+- name: Creatie van OSimage on premise
+  hosts: "{{ BUILDSERVER }}"
+  become: false
+  gather_facts: false
+
+  tasks:
+  - include_vars: ../vars/OSIMAGE_vars.yml
+  - include_tasks: tasks/CreatieOSImage.yml
