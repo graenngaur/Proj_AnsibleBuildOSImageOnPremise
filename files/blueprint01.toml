@@ -1,0 +1,78 @@
+name = "BLUEPRINT-TEST02"
+description = "Blueprint test 02"
+version = "0.0.1"
+modules = []
+groups = []
+
+packages = [
+    { name = "perl", version ="*" },
+    { name = "cloud-init", version = "*" },
+    { name = "open-vm-tools", version = "*" }
+]
+
+[customizations]
+hostname = "testimage67"
+
+[[customizations.group]]
+name = "testuser"
+gid = 6768 
+
+[[customizations.user]]
+name = "claude"
+description = "USER-DESCRIPTION"
+password = "$6$WmdmjIUOrXwcvEtT$szRSwQkV.4l/US8GhZxgTOO21h7o9EOKA7YMPhG32ZFqmnjvK2WeuxeWOTm7hyORd/RhmA5mxdTcZemnBvSJJ0"
+home = "/home/claude/"
+shell = "/usr/bin/bash"
+groups = ["users", "wheel","testuser"]
+uid = 6767 
+gid = 6768 
+
+[[customizations.group]]
+name = "testuser"
+gid = 6768 
+
+[[customizations.sshkey]]
+user = "root"
+key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCwqy7PQrHdPr7Q0q0GzqF0XvLpLpy2vSqmbK0pdaFCST4PpFBGEbxMU/ty1UBiObTonRiSvys511gpxWILOSq3MOso2FrNWSSNTVC2gagenIA+DmEqszYQNdf9WJpGGWsEvN3h4AT/gzqxuz7IzjTMtLeTCbkkJwAgHDs3KgfBpIbpji05W484e7C2rNzRccvaCGHST+82D10XQFL9WqZOk9mt5NHAArHEe7a3hnqK6Feg8WsCHyHLQtdoyufxEN/ov3weuK9sheWhpjf1gy80MGNEHj5/tFopAmldxWeXpqsFmIYYnrZCpIbrJHgVPLy5JKGmMU3PbVTDzXP9iaxWgYYJ17UqHanzJU4vF8D7vpSIKlAgCmP06Dkxitq3t+59LyD/XK9FcLsUGm6rhB8pMErP5u2I01TNW8GWZcubMte73JQ5GqdIAvBTSSTyy5E0N5AP8K8MpYniqQtUg/DYjvcGUWQM2w2quPUG77T3MRLGMvOW3QQc+DKakFLZrq0= root@rhel8apps.tribus-c.org"
+
+
+[[customizations.files]]
+path = "/etc/cloud/cloud.cfg.d/01_network.cfg"
+data = """
+network:
+  config: disabled
+"""
+
+[[customizations.files]]
+path = "/etc/cloud/cloud.cfg.d/10_foreman.cfg"
+data = """
+datasource_list: [NoCloud]
+datasource:
+  NoCloud:
+    seedfrom: http://192.168.0.18/userdata/
+"""
+
+[[customizations.files]]
+path = "/etc/cloud/cloud.cfg"
+data = """
+cloud_init_modules:
+ - ssh
+ - bootcmd
+
+cloud_config_modules:
+ - runcmd
+
+cloud_final_modules:
+ - scripts-per-once
+ - scripts-per-boot
+ - scripts-per-instance
+
+system_info:
+  distro: rhel
+  paths:
+    cloud_dir: /var/lib/cloud
+    templates_dir: /etc/cloud/templates
+  ssh_svcname: sshd
+
+# vim:syntax=yaml
+"""
