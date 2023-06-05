@@ -5,5 +5,5 @@
   gather_facts: false
 
   tasks:
-  - include_vars: ../vars/OSIMAGE_vars.yml
+  - include_vars: vars/OSIMAGE_vars.yml
   - include_tasks: tasks/CreatieOSImage.yml

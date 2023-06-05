@@ -1,0 +1,14 @@
+- name: update OS
+  dnf:
+    name: "*"
+    state: latest
+    update_cache: yes
+    update_only: yes
+    disable_gpg_check: yes
+ 
+- name: Controleer of een reboot nodig is
+  command: needs-restarting -r
+  register: resultsReboot
+  ignore_errors: true
+  failed_when: false
+  changed_when: resultsReboot.rc != 0
