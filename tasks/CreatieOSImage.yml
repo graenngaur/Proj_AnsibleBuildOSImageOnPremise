@@ -50,6 +50,12 @@
     chdir: "{{ IMAGE_PATH }}"
   changed_when: true
 
+- name: Hernoemen van image to {{ IMAGE_PATH }}{{ IMAGE_NAME }}
+  copy:
+    src: "{{ IMAGE_PATH }}{{ IMAGE_BUILDID }}.{{ IMAGE_TYPE }}"
+    dest: "{{ IMAGE_PATH }}{{ IMAGE_NAME }}"
+    remote_src: true
+
 - name: Wissen van build image {{ IMAGE_BUILDID }}
   command:
     cmd: composer-cli compose delete {{ IMAGE_BUILDID }}
