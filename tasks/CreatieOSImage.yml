@@ -52,7 +52,7 @@
 
 - name: Hernoemen van image to {{ IMAGE_PATH }}{{ IMAGE_NAME }}
   copy:
-    src: "{{ IMAGE_PATH }}{{ IMAGE_BUILDID }}-disk.vmdk"
+    src: "{{ IMAGE_PATH }}{{ IMAGE_BUILDID }}-disk.{{ IMAGE_TYPE }}"
     dest: "{{ IMAGE_PATH }}{{ IMAGE_NAME }}"
     remote_src: true
 
