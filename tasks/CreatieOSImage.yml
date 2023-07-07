@@ -52,10 +52,10 @@
 
 - name: Hernoemen van image to {{ IMAGE_PATH }}{{ IMAGE_NAME }}
   copy:
-    src: "{{ IMAGE_PATH }}{{ item }}"
+    src: "{{ item }}"
     dest: "{{ IMAGE_PATH }}{{ IMAGE_NAME }}"
     remote_src: true
-  with_fileglob: "{{ IMAGE_BUILDID }}*"
+  with_fileglob: "{{ IMAGE_PATH }}{{ IMAGE_BUILDID }}*"
 
 - name: Wissen van build image {{ IMAGE_BUILDID }}
   command:
