@@ -6,3 +6,4 @@ BLUEPRINT_ID: "blueprint-x86_64-rh88"
 IMAGE_PATH: "/tmp/"
 IMAGE_TYPE: "vmdk"
 IMAGE_2DELETE: true
+IMAGE_NAME: "RHELImage"
